@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Экономика кашемирового свитера</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ground:#F4F4F1; --paper:#FFFFFF; --ink:#1D2228; --muted:#5E646C; --line:#DCDDD8; --field:#F8F8F6;
+  --navy:#2E3A55; --navy-2:#5B6A8E; --navy-3:#A3AEC8; --navy-soft:#E6E9F0;
+  --ok:#2F6B4F; --ok-bg:#E3EFE8; --hi:#A23B3B; --hi-bg:#F5E1DF;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ground:#15181C; --paper:#1D2126; --ink:#E8E9EA; --muted:#A0A6AD; --line:#30353C; --field:#171A1E;
+    --navy:#AFBDE0; --navy-2:#7F8FB5; --navy-3:#4C5A7A; --navy-soft:#262E40;
+    --ok:#8FCBAE; --ok-bg:#1E3129; --hi:#E7A29B; --hi-bg:#3A2322;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ground:#15181C; --paper:#1D2126; --ink:#E8E9EA; --muted:#A0A6AD; --line:#30353C; --field:#171A1E;
+  --navy:#AFBDE0; --navy-2:#7F8FB5; --navy-3:#4C5A7A; --navy-soft:#262E40;
+  --ok:#8FCBAE; --ok-bg:#1E3129; --hi:#E7A29B; --hi-bg:#3A2322;
+}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font:15px/1.5 "Onest",system-ui,-apple-system,"Segoe UI",sans-serif;padding-inline:20px;padding-block:28px 56px}
+.wrap{max-width:1160px;margin:0 auto;display:grid;gap:24px}
+h1,h2{font-family:"Literata",Georgia,serif;font-weight:600;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h1{font-size:clamp(26px,4vw,36px);line-height:1.15}
+h2{font-size:17px}
+p{margin:0}
+.eyebrow{font:500 11px/1 "JetBrains Mono",ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.lede{color:var(--muted);max-width:72ch;margin-top:8px}
+
+.layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:860px){.layout{grid-template-columns:1fr}}
+
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:18px;display:grid;gap:14px}
+.panel[hidden]{display:none!important}
+.inputs{display:grid;gap:16px}
+
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{font:500 13px/1.2 "Onest",sans-serif;padding:10px 14px;border-radius:999px;border:1px solid var(--line);background:var(--field);color:var(--ink);cursor:pointer;text-align:left}
+.seg button small{display:block;font-weight:400;color:var(--muted);font-size:12px;margin-top:2px}
+.seg button[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:var(--paper)}
+.seg button[aria-pressed="true"] small{color:var(--paper);opacity:.8}
+.seg button:focus-visible,input:focus-visible,.reset:focus-visible{outline:2px solid var(--navy);outline-offset:2px}
+.hint{font-size:13px;color:var(--muted);max-width:72ch}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+.f{display:grid;gap:5px;align-content:start}
+.f label{font-size:13px;color:var(--muted)}
+.f .box{display:flex;align-items:center;background:var(--field);border:1px solid var(--line);border-radius:4px}
+.f input{width:100%;min-width:0;border:0;background:transparent;color:var(--ink);font:500 15px/1 "JetBrains Mono",monospace;font-variant-numeric:tabular-nums;padding:9px 10px}
+.f .u{padding-right:10px;color:var(--muted);font-size:13px;white-space:nowrap}
+
+.results{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);display:grid;gap:16px}
+@media (max-width:860px){.results{position:static}}
+.hero{display:grid;gap:4px}
+.hero .big{font:600 clamp(32px,5vw,44px)/1.05 "JetBrains Mono",monospace;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.big.pos{color:var(--ok)} .big.neg{color:var(--hi)}
+.pill{justify-self:start;font:500 12px/1 "Onest",sans-serif;padding:6px 10px;border-radius:999px}
+.pill.pos{background:var(--ok-bg);color:var(--ok)} .pill.neg{background:var(--hi-bg);color:var(--hi)}
+
+.bar{display:flex;gap:2px;height:22px;border-radius:4px;overflow:hidden;background:var(--line)}
+.bar span{display:block;height:100%;min-width:0;transition:flex-basis .25s}
+@media (prefers-reduced-motion:reduce){.bar span{transition:none}}
+.legend{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.legend li{display:grid;grid-template-columns:12px 1fr auto;gap:10px;align-items:center;font-size:14px}
+.legend i{width:12px;height:12px;border-radius:3px}
+.legend .v{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums}
+
+.breakdown{display:grid;gap:4px;margin:0;padding:10px 12px;background:var(--field);border-radius:4px;font-size:13px}
+.breakdown div{display:flex;justify-content:space-between;gap:12px}
+.breakdown dt{color:var(--muted)} .breakdown dd{margin:0;font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums}
+
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.kpi{background:var(--paper);padding:12px;display:grid;gap:4px;align-content:start}
+.kpi .l{font-size:12px;color:var(--muted)}
+.kpi .v{font:500 17px/1.2 "JetBrains Mono",monospace;font-variant-numeric:tabular-nums}
+.kpi .v.neg{color:var(--hi)}
+.note{font-size:13px;color:var(--muted)}
+.reset{justify-self:start;font:500 13px/1 "Onest",sans-serif;background:none;border:0;color:var(--navy);padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Калькулятор · тест в России → производство в Ташкенте</span>
+    <h1>Экономика кашемирового свитера</h1>
+    <p class="lede">Два этапа: мини-партия, полностью сделанная в России, и серийное производство в Ташкенте из итальянской пряжи через байера. Стартовые цифры — оценки для планирования, а не цены поставщиков; заменяйте их, как только получите реальные. Значения каждого этапа запоминаются в этом браузере отдельно.</p>
+  </header>
+
+  <div class="layout">
+    <section class="inputs" aria-label="Параметры">
+      <div class="panel">
+        <h2>Этап</h2>
+        <div class="seg" id="stage" role="group" aria-label="Этап">
+          <button type="button" data-stage="ru" aria-pressed="true">Тест в России<small>пряжа, лекала и вязка в России</small></button>
+          <button type="button" data-stage="tas" aria-pressed="false">Производство в Ташкенте<small>итальянская пряжа через байера</small></button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Цена и объём</h2>
+        <div class="grid">
+          <div class="f"><label for="price">Цена свитера</label><div class="box"><input id="price" type="number" inputmode="numeric" step="500"><span class="u">₽</span></div></div>
+          <div class="f"><label for="qty">Размер партии</label><div class="box"><input id="qty" type="number" inputmode="numeric" step="10"><span class="u">шт</span></div></div>
+          <div class="f"><label for="grams">Расход пряжи на свитер</label><div class="box"><input id="grams" type="number" inputmode="numeric" step="10"><span class="u">г</span></div></div>
+        </div>
+        <p class="hint">Расход — с учётом отходов. Для собаки до 6 кг обычно 80–130 г; у свитера для левретки с длинным рукавом ближе к верхней границе.</p>
+      </div>
+
+      <div class="panel" id="p-ru">
+        <h2>Себестоимость: тест в России</h2>
+        <div class="grid">
+          <div class="f"><label for="ruYarn">Кашемировая пряжа</label><div class="box"><input id="ruYarn" type="number" inputmode="numeric" step="100"><span class="u">₽ / 100 г</span></div></div>
+          <div class="f"><label for="ruKnit">Вязка и сборка</label><div class="box"><input id="ruKnit" type="number" inputmode="numeric" step="100"><span class="u">₽ / шт</span></div></div>
+          <div class="f"><label for="ruLabels">Бирки и упаковка</label><div class="box"><input id="ruLabels" type="number" inputmode="numeric" step="50"><span class="u">₽ / шт</span></div></div>
+        </div>
+        <p class="hint">Импорта нет, поэтому пошлины и ввозного НДС тоже нет.</p>
+      </div>
+
+      <div class="panel" id="p-tas" hidden>
+        <h2>Себестоимость: Ташкент</h2>
+        <div class="grid">
+          <div class="f"><label for="eur">Курс евро</label><div class="box"><input id="eur" type="number" inputmode="decimal" step="1"><span class="u">₽/€</span></div></div>
+          <div class="f"><label for="usd">Курс доллара</label><div class="box"><input id="usd" type="number" inputmode="decimal" step="1"><span class="u">₽/$</span></div></div>
+          <div class="f"><label for="tYarn">Пряжа в Италии</label><div class="box"><input id="tYarn" type="number" inputmode="decimal" step="5"><span class="u">€ / кг</span></div></div>
+          <div class="f"><label for="tBuyer">Комиссия байера</label><div class="box"><input id="tBuyer" type="number" inputmode="decimal" step="1"><span class="u">%</span></div></div>
+          <div class="f"><label for="tYarnShip">Доставка пряжи в Ташкент</label><div class="box"><input id="tYarnShip" type="number" inputmode="decimal" step="1"><span class="u">€ / кг</span></div></div>
+          <div class="f"><label for="tKnit">Вязка и сборка</label><div class="box"><input id="tKnit" type="number" inputmode="decimal" step="1"><span class="u">$ / шт</span></div></div>
+          <div class="f"><label for="tShip">Доставка в Россию</label><div class="box"><input id="tShip" type="number" inputmode="decimal" step="0.5"><span class="u">$ / шт</span></div></div>
+          <div class="f"><label for="tDuty">Пошлина при ввозе в РФ</label><div class="box"><input id="tDuty" type="number" inputmode="decimal" step="1"><span class="u">%</span></div></div>
+          <div class="f"><label for="tVat">НДС при ввозе</label><div class="box"><input id="tVat" type="number" inputmode="decimal" step="1"><span class="u">%</span></div></div>
+          <div class="f"><label for="tLabels">Бирки и упаковка</label><div class="box"><input id="tLabels" type="number" inputmode="numeric" step="50"><span class="u">₽ / шт</span></div></div>
+        </div>
+        <p class="hint">Пошлина 0% — при ввозе по соглашению о свободной торговле СНГ с сертификатом происхождения СТ-1. Это нужно подтвердить у таможенного брокера. НДС на ввоз на УСН не возмещается, поэтому он входит в себестоимость.</p>
+      </div>
+
+      <div class="panel">
+        <h2>Расходы на продажу</h2>
+        <div class="grid">
+          <div class="f"><label for="tax">Налог (УСН «доходы»)</label><div class="box"><input id="tax" type="number" inputmode="decimal" step="1"><span class="u">%</span></div></div>
+          <div class="f"><label for="acq">Эквайринг</label><div class="box"><input id="acq" type="number" inputmode="decimal" step="0.5"><span class="u">%</span></div></div>
+          <div class="f"><label for="ship">Доставка клиенту</label><div class="box"><input id="ship" type="number" inputmode="numeric" step="50"><span class="u">₽</span></div></div>
+          <div class="f"><label for="ret">Резерв на возвраты и брак</label><div class="box"><input id="ret" type="number" inputmode="decimal" step="1"><span class="u">% цены</span></div></div>
+          <div class="f"><label for="cac">Реклама на одну продажу</label><div class="box"><input id="cac" type="number" inputmode="numeric" step="100"><span class="u">₽</span></div></div>
+          <div class="f"><label for="fixed">Разовые расходы этапа</label><div class="box"><input id="fixed" type="number" inputmode="numeric" step="5000"><span class="u">₽</span></div></div>
+        </div>
+        <p class="hint" id="fixedHint"></p>
+      </div>
+
+      <div class="panel">
+        <h2>Ошейник к свитеру</h2>
+        <div class="grid">
+          <div class="f"><label for="attach">Доля покупателей, берущих ошейник</label><div class="box"><input id="attach" type="number" inputmode="numeric" step="5"><span class="u">%</span></div></div>
+          <div class="f"><label for="cPrice">Цена ошейника</label><div class="box"><input id="cPrice" type="number" inputmode="numeric" step="500"><span class="u">₽</span></div></div>
+          <div class="f"><label for="cCost">Себестоимость ошейника</label><div class="box"><input id="cCost" type="number" inputmode="numeric" step="100"><span class="u">₽</span></div></div>
+        </div>
+        <p class="hint">Поставьте 0%, если на этом этапе ошейника нет. Отдельная реклама и доставка на ошейник не заложены: его докупают к свитеру.</p>
+      </div>
+    </section>
+
+    <aside class="results panel" aria-live="polite" aria-label="Результат">
+      <div class="hero">
+        <span class="eyebrow" id="rStage">Прибыль со свитера</span>
+        <span class="big" id="rUnit">—</span>
+        <span class="pill" id="rMargin">—</span>
+      </div>
+
+      <div style="display:grid;gap:10px">
+        <span class="eyebrow">Куда уходит цена свитера</span>
+        <div class="bar" id="bar" role="img" aria-label="Структура цены">
+          <span id="bCost" style="background:var(--navy)"></span>
+          <span id="bOps" style="background:var(--navy-2)"></span>
+          <span id="bCac" style="background:var(--navy-3)"></span>
+          <span id="bProfit" style="background:var(--ok)"></span>
+        </div>
+        <ul class="legend">
+          <li><i style="background:var(--navy)"></i><span>Себестоимость</span><span class="v" id="lCost"></span></li>
+          <li><i style="background:var(--navy-2)"></i><span>Налог, эквайринг, доставка, возвраты</span><span class="v" id="lOps"></span></li>
+          <li><i style="background:var(--navy-3)"></i><span>Реклама</span><span class="v" id="lCac"></span></li>
+          <li><i id="lProfitSw" style="background:var(--ok)"></i><span id="lProfitName">Прибыль</span><span class="v" id="lProfit"></span></li>
+        </ul>
+        <dl class="breakdown" id="breakdown" aria-label="Из чего складывается себестоимость"></dl>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi"><span class="l">Выручка с партии</span><span class="v" id="kRev"></span></div>
+        <div class="kpi"><span class="l">Деньги на запуск партии</span><span class="v" id="kCash"></span></div>
+        <div class="kpi"><span class="l">Итог партии после разовых расходов</span><span class="v" id="kNet"></span></div>
+        <div class="kpi"><span class="l">Безубыточность</span><span class="v" id="kBe"></span></div>
+      </div>
+      <p class="note" id="note"></p>
+      <button type="button" class="reset" id="reset">Вернуть исходные значения этапа</button>
+    </aside>
+  </div>
+</div>
+
+<script>
+(function(){
+  var COMMON = ['price','qty','grams','tax','acq','ship','ret','cac','fixed','attach','cPrice','cCost'];
+  var RU = ['ruYarn','ruKnit','ruLabels'];
+  var TAS = ['eur','usd','tYarn','tBuyer','tYarnShip','tKnit','tShip','tDuty','tVat','tLabels'];
+  var DEFAULTS = {
+    ru: {price:15000, qty:30, grams:100, tax:6, acq:2.5, ship:450, ret:3, cac:1000, fixed:120000,
+         attach:0, cPrice:7500, cCost:3000,
+         ruYarn:3500, ruKnit:3000, ruLabels:400},
+    tas:{price:15000, qty:300, grams:100, tax:6, acq:2.5, ship:450, ret:3, cac:2000, fixed:250000,
+         attach:30, cPrice:7500, cCost:3000,
+         eur:95, usd:85, tYarn:160, tBuyer:10, tYarnShip:10, tKnit:14, tShip:3, tDuty:0, tVat:22, tLabels:400}
+  };
+  var FIXED_HINT = {
+    ru:'Разовые для теста: лекала и градация размеров, 2–3 образца, фотосъёмка. Оценка ~120 тыс. ₽.',
+    tas:'Разовые для переноса: отшив образцов на новой фабрике, поездка в Ташкент, сертификация и таможенный брокер, съёмка новой коллекции.'
+  };
+  var KEY = 'dogcashmere-calc-v2';
+  var store = {stage:'ru', ru:Object.assign({}, DEFAULTS.ru), tas:Object.assign({}, DEFAULTS.tas)};
+  try { var saved = JSON.parse(localStorage.getItem(KEY) || 'null');
+    if (saved){ store.stage = saved.stage === 'tas' ? 'tas' : 'ru';
+      store.ru = Object.assign(store.ru, saved.ru || {}); store.tas = Object.assign(store.tas, saved.tas || {}); } } catch(e){}
+
+  var $ = function(id){ return document.getElementById(id); };
+  var fmt = new Intl.NumberFormat('ru-RU', {maximumFractionDigits:0});
+  function rub(n){ return (n < 0 ? '−' : '') + fmt.format(Math.abs(Math.round(n))) + ' ₽'; }
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(store)); } catch(e){} }
+  function cur(){ return store[store.stage]; }
+  function fieldsFor(stage){ return COMMON.concat(stage === 'ru' ? RU : TAS); }
+
+  function fill(){
+    var s = cur();
+    fieldsFor(store.stage).forEach(function(k){ $(k).value = s[k]; });
+    document.querySelectorAll('#stage button').forEach(function(b){ b.setAttribute('aria-pressed', String(b.dataset.stage === store.stage)); });
+    $('p-ru').hidden = store.stage !== 'ru';
+    $('p-tas').hidden = store.stage !== 'tas';
+    $('fixedHint').textContent = FIXED_HINT[store.stage];
+    $('rStage').textContent = store.stage === 'ru' ? 'Прибыль со свитера · тест в России' : 'Прибыль со свитера · Ташкент';
+  }
+
+  function calc(){
+    var s = cur();
+    var n = function(k){ var v = Number(s[k]); return isFinite(v) ? v : 0; };
+    var kg = n('grams') / 1000;
+    var parts = [], cost = 0;
+    if (store.stage === 'ru'){
+      var yarn = n('ruYarn') * n('grams') / 100;
+      parts = [['Пряжа', yarn], ['Вязка и сборка', n('ruKnit')], ['Бирки и упаковка', n('ruLabels')]];
+    } else {
+      var yarnT = kg * (n('tYarn') * (1 + n('tBuyer')/100) + n('tYarnShip')) * n('eur');
+      var knitT = n('tKnit') * n('usd');
+      var shipT = n('tShip') * n('usd');
+      var value = yarnT + knitT + shipT;
+      var duty = value * n('tDuty')/100;
+      var vat = (value + duty) * n('tVat')/100;
+      parts = [['Пряжа с байером и доставкой', yarnT], ['Вязка и сборка', knitT], ['Доставка в Россию', shipT],
+               ['Пошлина', duty], ['НДС при ввозе', vat], ['Бирки и упаковка', n('tLabels')]];
+    }
+    parts.forEach(function(p){ cost += p[1]; });
+
+    var price = n('price');
+    var ops = price * (n('tax') + n('acq') + n('ret'))/100 + n('ship');
+    var cac = n('cac');
+    var unit = price - cost - ops - cac;
+    var collarUnit = n('cPrice') * (1 - (n('tax') + n('acq'))/100) - n('cCost');
+    var collarPer = collarUnit * n('attach')/100;
+    var qty = n('qty');
+    var rev = qty * (price + n('cPrice') * n('attach')/100);
+    var perOrder = unit + collarPer;
+    var net = qty * perOrder - n('fixed');
+    var cash = qty * (cost + n('cCost') * n('attach')/100) + n('fixed');
+    var be = perOrder > 0 ? Math.ceil(n('fixed') / perOrder) : null;
+
+    $('rUnit').textContent = rub(unit);
+    $('rUnit').className = 'big ' + (unit >= 0 ? 'pos' : 'neg');
+    var m = price > 0 ? unit / price * 100 : 0;
+    $('rMargin').textContent = (unit >= 0 ? 'Маржа ' : 'Убыток, ') + Math.round(Math.abs(m)) + '% от цены';
+    $('rMargin').className = 'pill ' + (unit >= 0 ? 'pos' : 'neg');
+
+    var total = Math.max(price, cost + ops + cac);
+    var pct = function(v){ return total > 0 ? Math.max(v,0) / total * 100 : 0; };
+    $('bCost').style.flex = '0 0 ' + pct(cost) + '%';
+    $('bOps').style.flex = '0 0 ' + pct(ops) + '%';
+    $('bCac').style.flex = '0 0 ' + pct(cac) + '%';
+    $('bProfit').style.flex = '0 0 ' + pct(unit) + '%';
+    $('bProfit').hidden = unit <= 0;
+    $('lCost').textContent = rub(cost);
+    $('lOps').textContent = rub(ops);
+    $('lCac').textContent = rub(cac);
+    $('lProfit').textContent = rub(unit);
+    $('lProfitName').textContent = unit >= 0 ? 'Прибыль' : 'Убыток: расходы больше цены';
+    $('lProfitSw').style.background = unit >= 0 ? 'var(--ok)' : 'var(--hi)';
+    $('bar').setAttribute('aria-label', 'Себестоимость ' + rub(cost) + ', операционные ' + rub(ops) + ', реклама ' + rub(cac) + ', прибыль ' + rub(unit));
+
+    var bd = $('breakdown'); bd.innerHTML = '';
+    parts.forEach(function(p){
+      var d = document.createElement('div');
+      var dt = document.createElement('dt'); dt.textContent = p[0];
+      var dd = document.createElement('dd'); dd.textContent = rub(p[1]);
+      d.appendChild(dt); d.appendChild(dd); bd.appendChild(d);
+    });
+
+    $('kRev').textContent = rub(rev);
+    $('kCash').textContent = rub(cash);
+    $('kNet').textContent = rub(net);
+    $('kNet').className = 'v' + (net < 0 ? ' neg' : '');
+    $('kBe').textContent = be === null ? 'не достигается' : fmt.format(be) + ' шт';
+    $('kBe').className = 'v' + (be === null || be > qty ? ' neg' : '');
+
+    var note;
+    if (be === null) note = 'Каждый заказ убыточен: поднимите цену или снизьте себестоимость и рекламу.';
+    else if (be > qty) note = 'Разовые расходы окупятся на ' + fmt.format(be) + '-м свитере — это больше партии на ' + fmt.format(be - qty) + ' шт.';
+    else note = 'Разовые расходы окупаются на ' + fmt.format(be) + '-м свитере из ' + fmt.format(qty) + '.';
+    if (store.stage === 'ru') note += ' Цель теста — проверить спрос и посадку, а не заработать: лекала останутся и для Ташкента.';
+    $('note').textContent = note;
+  }
+
+  document.querySelectorAll('#stage button').forEach(function(b){
+    b.addEventListener('click', function(){ store.stage = b.dataset.stage; fill(); calc(); save(); });
+  });
+  COMMON.concat(RU, TAS).forEach(function(k){
+    $(k).addEventListener('input', function(e){ cur()[k] = e.target.value === '' ? 0 : Number(e.target.value); calc(); save(); });
+  });
+  $('reset').addEventListener('click', function(){ store[store.stage] = Object.assign({}, DEFAULTS[store.stage]); fill(); calc(); save(); });
+
+  fill(); calc();
+})();
+</script>
+</body>
+</html>
