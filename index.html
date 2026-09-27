@@ -194,8 +194,8 @@ p{margin:0}
       <div class="kpis">
         <div class="kpi"><span class="l">Выручка с партии</span><span class="v" id="kRev"></span></div>
         <div class="kpi"><span class="l">Деньги на запуск партии</span><span class="v" id="kCash"></span></div>
-        <div class="kpi"><span class="l">Итог, если продана вся партия</span><span class="v" id="kNet"></span></div>
-        <div class="kpi"><span class="l">Окупаемость: сколько нужно продать</span><span class="v" id="kBe"></span></div>
+        <div class="kpi"><span class="l">Итог партии после разовых расходов</span><span class="v" id="kNet"></span></div>
+        <div class="kpi"><span class="l">Безубыточность</span><span class="v" id="kBe"></span></div>
       </div>
       <p class="note" id="note"></p>
       <button type="button" class="reset" id="reset">Вернуть исходные значения этапа</button>
@@ -274,10 +274,7 @@ p{margin:0}
     var perOrder = unit + collarPer;
     var net = qty * perOrder - n('fixed');
     var cash = qty * (cost + n('cCost') * n('attach')/100) + n('fixed');
-    // Партия оплачивается заранее целиком, поэтому окупаемость считаем от всех вложенных денег:
-    // сколько продаж нужно, чтобы вернуть производство всей партии + разовые расходы.
-    var perSaleIn = price - ops - cac + n('cPrice') * (1 - (n('tax') + n('acq'))/100) * n('attach')/100;
-    var be = perSaleIn > 0 ? Math.ceil(cash / perSaleIn) : null;
+    var be = perOrder > 0 ? Math.ceil(n('fixed') / perOrder) : null;
 
     $('rUnit').textContent = rub(unit);
     $('rUnit').className = 'big ' + (unit >= 0 ? 'pos' : 'neg');
@@ -312,13 +309,13 @@ p{margin:0}
     $('kCash').textContent = rub(cash);
     $('kNet').textContent = rub(net);
     $('kNet').className = 'v' + (net < 0 ? ' neg' : '');
-    $('kBe').textContent = be === null ? 'не достигается' : (be > qty ? 'не окупается' : fmt.format(be) + ' из ' + fmt.format(qty) + ' шт');
+    $('kBe').textContent = be === null ? 'не достигается' : fmt.format(be) + ' шт';
     $('kBe').className = 'v' + (be === null || be > qty ? ' neg' : '');
 
     var note;
-    if (be === null) note = 'Каждая продажа убыточна: поднимите цену или снизьте рекламу и расходы на продажу.';
-    else if (be > qty) note = 'Даже если продать всю партию, вложенные ' + rub(cash) + ' не вернутся: нужно ' + fmt.format(be) + ' продаж, а в партии ' + fmt.format(qty) + ' шт.';
-    else note = 'Чтобы вернуть все вложенные ' + rub(cash) + ' (производство всей партии и разовые расходы), нужно продать ' + fmt.format(be) + ' свитеров из ' + fmt.format(qty) + ' (' + Math.round(be / qty * 100) + '%). Всё, что продано сверх, — прибыль.';
+    if (be === null) note = 'Каждый заказ убыточен: поднимите цену или снизьте себестоимость и рекламу.';
+    else if (be > qty) note = 'Разовые расходы окупятся на ' + fmt.format(be) + '-м свитере — это больше партии на ' + fmt.format(be - qty) + ' шт.';
+    else note = 'Разовые расходы окупаются на ' + fmt.format(be) + '-м свитере из ' + fmt.format(qty) + '.';
     if (store.stage === 'ru') note += ' Цель теста — проверить спрос и посадку, а не заработать: лекала останутся и для Ташкента.';
     $('note').textContent = note;
   }
