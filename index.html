@@ -85,17 +85,30 @@ p{margin:0}
 .kpi .v.neg{color:var(--hi)}
 .note{font-size:13px;color:var(--muted)}
 .reset{justify-self:start;font:500 13px/1 "Onest",sans-serif;background:none;border:0;color:var(--navy);padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);overflow-x:auto}
+.tabs button{font:500 15px/1.2 "Onest",sans-serif;padding:10px 14px;background:none;border:0;border-bottom:2px solid transparent;margin-bottom:-1px;color:var(--muted);cursor:pointer;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--navy)}
+.tabs button:focus-visible{outline:2px solid var(--navy);outline-offset:-2px}
+[role="tabpanel"][hidden]{display:none}
+.kpis .kpi.wide{grid-column:1 / -1}
 </style>
 </head>
 <body>
 
 <div class="wrap">
   <header>
-    <span class="eyebrow">Калькулятор · тест в России → производство в Ташкенте</span>
-    <h1>Экономика кашемирового свитера</h1>
-    <p class="lede">Два этапа: мини-партия, полностью сделанная в России, и серийное производство в Ташкенте из итальянской пряжи через байера. Стартовые цифры — оценки для планирования, а не цены поставщиков; заменяйте их, как только получите реальные. Значения каждого этапа запоминаются в этом браузере отдельно.</p>
+    <span class="eyebrow" id="hEyebrow">Калькулятор · тест в России → производство в Ташкенте</span>
+    <h1 id="hTitle">Экономика кашемирового свитера</h1>
+    <p class="lede" id="hLede">Два этапа: мини-партия, полностью сделанная в России, и серийное производство в Ташкенте из итальянской пряжи через байера. Стартовые цифры — оценки для планирования, а не цены поставщиков; заменяйте их, как только получите реальные. Значения каждого этапа запоминаются в этом браузере отдельно.</p>
   </header>
 
+  <div class="tabs" role="tablist" aria-label="Калькуляторы">
+    <button type="button" role="tab" id="t-sweater" aria-controls="tab-sweater" aria-selected="true" data-tab="sweater">Свитер</button>
+    <button type="button" role="tab" id="t-necklace" aria-controls="tab-necklace" aria-selected="false" data-tab="necklace" tabindex="-1">Ожерелье</button>
+  </div>
+
+  <div role="tabpanel" id="tab-sweater" aria-labelledby="t-sweater">
   <div class="layout">
     <section class="inputs" aria-label="Параметры">
       <div class="panel">
@@ -157,13 +170,14 @@ p{margin:0}
       </div>
 
       <div class="panel">
-        <h2>Ошейник к свитеру</h2>
+        <h2>Ожерелье к свитеру</h2>
         <div class="grid">
-          <div class="f"><label for="attach">Доля покупателей, берущих ошейник</label><div class="box"><input id="attach" type="number" inputmode="numeric" step="5"><span class="u">%</span></div></div>
-          <div class="f"><label for="cPrice">Цена ошейника</label><div class="box"><input id="cPrice" type="number" inputmode="numeric" step="500"><span class="u">₽</span></div></div>
-          <div class="f"><label for="cCost">Себестоимость ошейника</label><div class="box"><input id="cCost" type="number" inputmode="numeric" step="100"><span class="u">₽</span></div></div>
+          <div class="f"><label for="attach">Доля покупателей, берущих ожерелье</label><div class="box"><input id="attach" type="number" inputmode="numeric" step="5"><span class="u">%</span></div></div>
+          <div class="f"><label for="cPrice">Цена ожерелья</label><div class="box"><input id="cPrice" type="number" inputmode="numeric" step="500"><span class="u">₽</span></div></div>
+          <div class="f"><label for="cCost">Себестоимость ожерелья</label><div class="box"><input id="cCost" type="number" inputmode="numeric" step="100"><span class="u">₽</span></div></div>
         </div>
-        <p class="hint">Поставьте 0%, если на этом этапе ошейника нет. Отдельная реклама и доставка на ошейник не заложены: его докупают к свитеру.</p>
+        <p class="hint">Поставьте 0%, если на этом этапе ожерелья нет. Отдельная реклама и доставка на ожерелье не заложены: его докупают к свитеру.</p>
+        <button type="button" class="reset" id="fromNecklace">Подставить цену в сете и себестоимость из вкладки «Ожерелье»</button>
       </div>
     </section>
 
@@ -194,12 +208,93 @@ p{margin:0}
       <div class="kpis">
         <div class="kpi"><span class="l">Выручка с партии</span><span class="v" id="kRev"></span></div>
         <div class="kpi"><span class="l">Деньги на запуск партии</span><span class="v" id="kCash"></span></div>
-        <div class="kpi"><span class="l">Итог партии после разовых расходов</span><span class="v" id="kNet"></span></div>
-        <div class="kpi"><span class="l">Безубыточность</span><span class="v" id="kBe"></span></div>
+        <div class="kpi"><span class="l">Итог, если продана вся партия</span><span class="v" id="kNet"></span></div>
+        <div class="kpi"><span class="l">Окупаемость: сколько нужно продать</span><span class="v" id="kBe"></span></div>
       </div>
       <p class="note" id="note"></p>
       <button type="button" class="reset" id="reset">Вернуть исходные значения этапа</button>
     </aside>
+  </div>
+  </div>
+
+  <div role="tabpanel" id="tab-necklace" aria-labelledby="t-necklace" hidden>
+  <div class="layout">
+    <section class="inputs" aria-label="Параметры ожерелья">
+      <div class="panel">
+        <h2>Цена и объём</h2>
+        <div class="grid">
+          <div class="f"><label for="nPrice">Цена отдельно</label><div class="box"><input id="nPrice" type="number" inputmode="numeric" step="500"><span class="u">₽</span></div></div>
+          <div class="f"><label for="nSetPrice">Цена в сете со свитером</label><div class="box"><input id="nSetPrice" type="number" inputmode="numeric" step="500"><span class="u">₽</span></div></div>
+          <div class="f"><label for="nSetShare">Доля продаж в сете</label><div class="box"><input id="nSetShare" type="number" inputmode="numeric" step="5"><span class="u">%</span></div></div>
+          <div class="f"><label for="nQty">Размер партии</label><div class="box"><input id="nQty" type="number" inputmode="numeric" step="5"><span class="u">шт</span></div></div>
+        </div>
+        <p class="hint">В сете ожерелье докупают к свитеру: доставку и рекламу уже оплатил свитер, поэтому здесь они не вычитаются. При продаже отдельно вычитаются полностью.</p>
+      </div>
+
+      <div class="panel">
+        <h2>Себестоимость ожерелья</h2>
+        <div class="grid">
+          <div class="f"><label for="nPearl">Жемчуг</label><div class="box"><input id="nPearl" type="number" inputmode="numeric" step="50"><span class="u">₽ / нить</span></div></div>
+          <div class="f"><label for="nStrands">Нитей на ожерелье</label><div class="box"><input id="nStrands" type="number" inputmode="decimal" step="0.1"><span class="u">нити</span></div></div>
+          <div class="f"><label for="nMedal">Медальон</label><div class="box"><input id="nMedal" type="number" inputmode="numeric" step="50"><span class="u">₽ / шт</span></div></div>
+          <div class="f"><label for="nEngr">Гравировка</label><div class="box"><input id="nEngr" type="number" inputmode="numeric" step="50"><span class="u">₽ / шт</span></div></div>
+          <div class="f"><label for="nFind">Фурнитура</label><div class="box"><input id="nFind" type="number" inputmode="numeric" step="50"><span class="u">₽ / шт</span></div></div>
+          <div class="f"><label for="nAssy">Сборка</label><div class="box"><input id="nAssy" type="number" inputmode="numeric" step="50"><span class="u">₽ / шт</span></div></div>
+          <div class="f"><label for="nPack">Упаковка</label><div class="box"><input id="nPack" type="number" inputmode="numeric" step="50"><span class="u">₽ / шт</span></div></div>
+        </div>
+        <p class="hint">Жемчуг: натуральный речной рис 4×3 мм AAA, нить ≈38 см за 1 950 ₽. Двойное ожерелье с запасом на отбор — около 1,5 нити, одинарное — около 0,8. Фурнитура: замок, тросик, кримпы, удлинитель, разделители. Медальон и фурнитура — сталь или латунь с позолотой: серебро потребует учёта в ГИИС ДМДК.</p>
+      </div>
+
+      <div class="panel">
+        <h2>Расходы на продажу</h2>
+        <div class="grid">
+          <div class="f"><label for="nTax">Налог (УСН «доходы»)</label><div class="box"><input id="nTax" type="number" inputmode="decimal" step="1"><span class="u">%</span></div></div>
+          <div class="f"><label for="nAcq">Эквайринг</label><div class="box"><input id="nAcq" type="number" inputmode="decimal" step="0.5"><span class="u">%</span></div></div>
+          <div class="f"><label for="nRet">Резерв на возвраты и брак</label><div class="box"><input id="nRet" type="number" inputmode="decimal" step="1"><span class="u">% цены</span></div></div>
+          <div class="f"><label for="nShip">Доставка клиенту, отдельно</label><div class="box"><input id="nShip" type="number" inputmode="numeric" step="50"><span class="u">₽</span></div></div>
+          <div class="f"><label for="nCac">Реклама на продажу, отдельно</label><div class="box"><input id="nCac" type="number" inputmode="numeric" step="100"><span class="u">₽</span></div></div>
+          <div class="f"><label for="nFixed">Разовые расходы</label><div class="box"><input id="nFixed" type="number" inputmode="numeric" step="1000"><span class="u">₽</span></div></div>
+        </div>
+        <p class="hint">Разовые: 3–4 прототипа в двух длинах, лишние нити на подбор оттенка, кусачки и кримп-клещи, съёмка. Оценка ~20 тыс. ₽.</p>
+      </div>
+    </section>
+
+    <aside class="results panel" aria-live="polite" aria-label="Результат по ожерелью">
+      <div class="hero">
+        <span class="eyebrow">Прибыль с ожерелья · в среднем</span>
+        <span class="big" id="nUnit">—</span>
+        <span class="pill" id="nMargin">—</span>
+      </div>
+
+      <div style="display:grid;gap:10px">
+        <span class="eyebrow">Куда уходит средняя цена ожерелья</span>
+        <div class="bar" id="nBar" role="img" aria-label="Структура цены">
+          <span id="nbCost" style="background:var(--navy)"></span>
+          <span id="nbOps" style="background:var(--navy-2)"></span>
+          <span id="nbCac" style="background:var(--navy-3)"></span>
+          <span id="nbProfit" style="background:var(--ok)"></span>
+        </div>
+        <ul class="legend">
+          <li><i style="background:var(--navy)"></i><span>Себестоимость</span><span class="v" id="nlCost"></span></li>
+          <li><i style="background:var(--navy-2)"></i><span>Налог, эквайринг, доставка, возвраты</span><span class="v" id="nlOps"></span></li>
+          <li><i style="background:var(--navy-3)"></i><span>Реклама</span><span class="v" id="nlCac"></span></li>
+          <li><i id="nlProfitSw" style="background:var(--ok)"></i><span id="nlProfitName">Прибыль</span><span class="v" id="nlProfit"></span></li>
+        </ul>
+        <dl class="breakdown" id="nBreakdown" aria-label="Из чего складывается себестоимость"></dl>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi"><span class="l">Прибыль при продаже отдельно</span><span class="v" id="nkSolo"></span></div>
+        <div class="kpi"><span class="l">Прибыль при продаже в сете</span><span class="v" id="nkSet"></span></div>
+        <div class="kpi"><span class="l">Выручка с партии</span><span class="v" id="nkRev"></span></div>
+        <div class="kpi"><span class="l">Деньги на запуск партии</span><span class="v" id="nkCash"></span></div>
+        <div class="kpi"><span class="l">Итог, если продана вся партия</span><span class="v" id="nkNet"></span></div>
+        <div class="kpi"><span class="l">Окупаемость: сколько нужно продать</span><span class="v" id="nkBe"></span></div>
+      </div>
+      <p class="note" id="nNote"></p>
+      <button type="button" class="reset" id="nReset">Вернуть исходные значения</button>
+    </aside>
+  </div>
   </div>
 </div>
 
@@ -210,10 +305,10 @@ p{margin:0}
   var TAS = ['eur','usd','tYarn','tBuyer','tYarnShip','tKnit','tShip','tDuty','tVat','tLabels'];
   var DEFAULTS = {
     ru: {price:15000, qty:30, grams:100, tax:6, acq:2.5, ship:450, ret:3, cac:1000, fixed:120000,
-         attach:0, cPrice:7500, cCost:3000,
+         attach:0, cPrice:11900, cCost:5100,
          ruYarn:3500, ruKnit:3000, ruLabels:400},
     tas:{price:15000, qty:300, grams:100, tax:6, acq:2.5, ship:450, ret:3, cac:2000, fixed:250000,
-         attach:30, cPrice:7500, cCost:3000,
+         attach:30, cPrice:11900, cCost:5100,
          eur:95, usd:85, tYarn:160, tBuyer:10, tYarnShip:10, tKnit:14, tShip:3, tDuty:0, tVat:22, tLabels:400}
   };
   var FIXED_HINT = {
@@ -274,7 +369,10 @@ p{margin:0}
     var perOrder = unit + collarPer;
     var net = qty * perOrder - n('fixed');
     var cash = qty * (cost + n('cCost') * n('attach')/100) + n('fixed');
-    var be = perOrder > 0 ? Math.ceil(n('fixed') / perOrder) : null;
+    // Партия оплачивается заранее целиком, поэтому окупаемость считаем от всех вложенных денег:
+    // сколько продаж нужно, чтобы вернуть производство всей партии + разовые расходы.
+    var perSaleIn = price - ops - cac + n('cPrice') * (1 - (n('tax') + n('acq'))/100) * n('attach')/100;
+    var be = perSaleIn > 0 ? Math.ceil(cash / perSaleIn) : null;
 
     $('rUnit').textContent = rub(unit);
     $('rUnit').className = 'big ' + (unit >= 0 ? 'pos' : 'neg');
@@ -309,13 +407,13 @@ p{margin:0}
     $('kCash').textContent = rub(cash);
     $('kNet').textContent = rub(net);
     $('kNet').className = 'v' + (net < 0 ? ' neg' : '');
-    $('kBe').textContent = be === null ? 'не достигается' : fmt.format(be) + ' шт';
+    $('kBe').textContent = be === null ? 'не достигается' : (be > qty ? 'не окупается' : fmt.format(be) + ' из ' + fmt.format(qty) + ' шт');
     $('kBe').className = 'v' + (be === null || be > qty ? ' neg' : '');
 
     var note;
-    if (be === null) note = 'Каждый заказ убыточен: поднимите цену или снизьте себестоимость и рекламу.';
-    else if (be > qty) note = 'Разовые расходы окупятся на ' + fmt.format(be) + '-м свитере — это больше партии на ' + fmt.format(be - qty) + ' шт.';
-    else note = 'Разовые расходы окупаются на ' + fmt.format(be) + '-м свитере из ' + fmt.format(qty) + '.';
+    if (be === null) note = 'Каждая продажа убыточна: поднимите цену или снизьте рекламу и расходы на продажу.';
+    else if (be > qty) note = 'Даже если продать всю партию, вложенные ' + rub(cash) + ' не вернутся: нужно ' + fmt.format(be) + ' продаж, а в партии ' + fmt.format(qty) + ' шт.';
+    else note = 'Чтобы вернуть все вложенные ' + rub(cash) + ' (производство всей партии и разовые расходы), нужно продать ' + fmt.format(be) + ' свитеров из ' + fmt.format(qty) + ' (' + Math.round(be / qty * 100) + '%). Всё, что продано сверх, — прибыль.';
     if (store.stage === 'ru') note += ' Цель теста — проверить спрос и посадку, а не заработать: лекала останутся и для Ташкента.';
     $('note').textContent = note;
   }
@@ -327,8 +425,164 @@ p{margin:0}
     $(k).addEventListener('input', function(e){ cur()[k] = e.target.value === '' ? 0 : Number(e.target.value); calc(); save(); });
   });
   $('reset').addEventListener('click', function(){ store[store.stage] = Object.assign({}, DEFAULTS[store.stage]); fill(); calc(); save(); });
+  $('fromNecklace').addEventListener('click', function(){
+    if (!window.wagNecklace) return;
+    var nk = window.wagNecklace.get();
+    cur().cPrice = Math.round(nk.setPrice);
+    cur().cCost = Math.round(nk.cost);
+    fill(); calc(); save();
+  });
 
   fill(); calc();
+})();
+
+// ---------- Ожерелье ----------
+(function(){
+  var FIELDS = ['nPrice','nSetPrice','nSetShare','nQty','nPearl','nStrands','nMedal','nEngr','nFind','nAssy','nPack',
+                'nTax','nAcq','nRet','nShip','nCac','nFixed'];
+  var DEFAULTS = {nPrice:14900, nSetPrice:11900, nSetShare:60, nQty:30,
+                  nPearl:1950, nStrands:1.5, nMedal:300, nEngr:450, nFind:350, nAssy:600, nPack:500,
+                  nTax:6, nAcq:2.5, nRet:3, nShip:450, nCac:1000, nFixed:20000};
+  var KEY = 'dogcashmere-necklace-v1';
+  var s = Object.assign({}, DEFAULTS);
+  try { var saved = JSON.parse(localStorage.getItem(KEY) || 'null'); if (saved) s = Object.assign(s, saved); } catch(e){}
+
+  var $ = function(id){ return document.getElementById(id); };
+  var fmt = new Intl.NumberFormat('ru-RU', {maximumFractionDigits:0});
+  var fmt1 = new Intl.NumberFormat('ru-RU', {maximumFractionDigits:1});
+  function rub(n){ return (n < 0 ? '−' : '') + fmt.format(Math.abs(Math.round(n))) + ' ₽'; }
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(s)); } catch(e){} }
+  function n(k){ var v = Number(s[k]); return isFinite(v) ? v : 0; }
+
+  function numbers(){
+    var parts = [
+      ['Жемчуг (' + fmt1.format(n('nStrands')) + ' нити)', n('nPearl') * n('nStrands')],
+      ['Медальон', n('nMedal')], ['Гравировка', n('nEngr')], ['Фурнитура', n('nFind')],
+      ['Сборка', n('nAssy')], ['Упаковка', n('nPack')]
+    ];
+    var cost = 0; parts.forEach(function(p){ cost += p[1]; });
+    var rate = (n('nTax') + n('nAcq') + n('nRet')) / 100;
+    var share = Math.min(Math.max(n('nSetShare'), 0), 100) / 100;
+    var solo = {price:n('nPrice'), ops:n('nPrice') * rate + n('nShip'), cac:n('nCac')};
+    var set = {price:n('nSetPrice'), ops:n('nSetPrice') * rate, cac:0};
+    solo.profit = solo.price - solo.ops - solo.cac - cost;
+    set.profit = set.price - set.ops - cost;
+    var avg = {
+      price: share * set.price + (1 - share) * solo.price,
+      ops: share * set.ops + (1 - share) * solo.ops,
+      cac: (1 - share) * solo.cac
+    };
+    avg.profit = avg.price - avg.ops - avg.cac - cost;
+    return {parts:parts, cost:cost, solo:solo, set:set, avg:avg, setPrice:n('nSetPrice')};
+  }
+  window.wagNecklace = {get: numbers};
+
+  function fill(){ FIELDS.forEach(function(k){ $(k).value = s[k]; }); }
+
+  function calc(){
+    var r = numbers(), cost = r.cost, a = r.avg, unit = a.profit;
+    var qty = n('nQty');
+
+    $('nUnit').textContent = rub(unit);
+    $('nUnit').className = 'big ' + (unit >= 0 ? 'pos' : 'neg');
+    var m = a.price > 0 ? unit / a.price * 100 : 0;
+    var markup = cost > 0 ? a.price / cost : 0;
+    $('nMargin').textContent = (unit >= 0 ? 'Маржа ' : 'Убыток, ') + Math.round(Math.abs(m)) + '% от цены · наценка ×' + fmt1.format(markup);
+    $('nMargin').className = 'pill ' + (unit >= 0 ? 'pos' : 'neg');
+
+    var total = Math.max(a.price, cost + a.ops + a.cac);
+    var pct = function(v){ return total > 0 ? Math.max(v,0) / total * 100 : 0; };
+    $('nbCost').style.flex = '0 0 ' + pct(cost) + '%';
+    $('nbOps').style.flex = '0 0 ' + pct(a.ops) + '%';
+    $('nbCac').style.flex = '0 0 ' + pct(a.cac) + '%';
+    $('nbProfit').style.flex = '0 0 ' + pct(unit) + '%';
+    $('nbProfit').hidden = unit <= 0;
+    $('nlCost').textContent = rub(cost);
+    $('nlOps').textContent = rub(a.ops);
+    $('nlCac').textContent = rub(a.cac);
+    $('nlProfit').textContent = rub(unit);
+    $('nlProfitName').textContent = unit >= 0 ? 'Прибыль' : 'Убыток: расходы больше цены';
+    $('nlProfitSw').style.background = unit >= 0 ? 'var(--ok)' : 'var(--hi)';
+    $('nBar').setAttribute('aria-label', 'Себестоимость ' + rub(cost) + ', операционные ' + rub(a.ops) + ', реклама ' + rub(a.cac) + ', прибыль ' + rub(unit));
+
+    var bd = $('nBreakdown'); bd.innerHTML = '';
+    r.parts.concat([['Итого себестоимость', cost]]).forEach(function(p, i, arr){
+      var d = document.createElement('div');
+      var dt = document.createElement('dt'); dt.textContent = p[0];
+      var dd = document.createElement('dd'); dd.textContent = rub(p[1]);
+      if (i === arr.length - 1){ d.style.borderTop = '1px solid var(--line)'; d.style.paddingTop = '4px'; dt.style.color = 'var(--ink)'; }
+      d.appendChild(dt); d.appendChild(dd); bd.appendChild(d);
+    });
+
+    var rev = qty * a.price;
+    var cash = qty * cost + n('nFixed');
+    var net = qty * unit - n('nFixed');
+    var perSaleIn = a.price - a.ops - a.cac;
+    var be = perSaleIn > 0 ? Math.ceil(cash / perSaleIn) : null;
+
+    $('nkSolo').textContent = rub(r.solo.profit);
+    $('nkSolo').className = 'v' + (r.solo.profit < 0 ? ' neg' : '');
+    $('nkSet').textContent = rub(r.set.profit);
+    $('nkSet').className = 'v' + (r.set.profit < 0 ? ' neg' : '');
+    $('nkRev').textContent = rub(rev);
+    $('nkCash').textContent = rub(cash);
+    $('nkNet').textContent = rub(net);
+    $('nkNet').className = 'v' + (net < 0 ? ' neg' : '');
+    $('nkBe').textContent = be === null ? 'не достигается' : (be > qty ? 'не окупается' : fmt.format(be) + ' из ' + fmt.format(qty) + ' шт');
+    $('nkBe').className = 'v' + (be === null || be > qty ? ' neg' : '');
+
+    var note;
+    if (be === null) note = 'Каждая продажа убыточна: поднимите цену или снизьте рекламу и расходы на продажу.';
+    else if (be > qty) note = 'Даже если продать всю партию, вложенные ' + rub(cash) + ' не вернутся: нужно ' + fmt.format(be) + ' продаж, а в партии ' + fmt.format(qty) + ' шт.';
+    else note = 'Чтобы вернуть вложенные ' + rub(cash) + ' (компоненты на всю партию и разовые расходы), нужно продать ' + fmt.format(be) + ' ожерелий из ' + fmt.format(qty) + ' (' + Math.round(be / qty * 100) + '%). Расчёт исходит из того, что компоненты закупаются на всю партию сразу.';
+    $('nNote').textContent = note;
+  }
+
+  FIELDS.forEach(function(k){
+    $(k).addEventListener('input', function(e){ s[k] = e.target.value === '' ? 0 : Number(e.target.value); calc(); save(); });
+  });
+  $('nReset').addEventListener('click', function(){ s = Object.assign({}, DEFAULTS); fill(); calc(); save(); });
+
+  fill(); calc();
+})();
+
+// ---------- Вкладки ----------
+(function(){
+  var HEAD = {
+    sweater:{eyebrow:'Калькулятор · тест в России → производство в Ташкенте', title:'Экономика кашемирового свитера',
+      lede:'Два этапа: мини-партия, полностью сделанная в России, и серийное производство в Ташкенте из итальянской пряжи через байера. Стартовые цифры — оценки для планирования, а не цены поставщиков; заменяйте их, как только получите реальные. Значения каждого этапа запоминаются в этом браузере отдельно.'},
+    necklace:{eyebrow:'Калькулятор · мини-партия в России', title:'Экономика жемчужного ожерелья',
+      lede:'Ожерелье из натурального речного жемчуга с гравированным медальоном. Считает прибыль при продаже отдельно и в сете со свитером. Стартовые цифры — найденные цены поставщиков и оценки; заменяйте их реальными. Значения запоминаются в этом браузере.'}
+  };
+  var KEY = 'wagc-tab';
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
+  function show(name, focus){
+    if (!HEAD[name]) name = 'sweater';
+    tabs.forEach(function(t){
+      var on = t.dataset.tab === name;
+      t.setAttribute('aria-selected', String(on));
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+      if (on && focus) t.focus();
+    });
+    document.getElementById('hEyebrow').textContent = HEAD[name].eyebrow;
+    document.getElementById('hTitle').textContent = HEAD[name].title;
+    document.getElementById('hLede').textContent = HEAD[name].lede;
+    document.title = HEAD[name].title;
+    try { localStorage.setItem(KEY, name); } catch(e){}
+    if (history.replaceState) history.replaceState(null, '', name === 'necklace' ? '#necklace' : location.pathname + location.search);
+  }
+  tabs.forEach(function(t, i){
+    t.addEventListener('click', function(){ show(t.dataset.tab); });
+    t.addEventListener('keydown', function(e){
+      var j = e.key === 'ArrowRight' ? i + 1 : e.key === 'ArrowLeft' ? i - 1 : null;
+      if (j === null) return;
+      e.preventDefault(); show(tabs[(j + tabs.length) % tabs.length].dataset.tab, true);
+    });
+  });
+  var start = location.hash === '#necklace' ? 'necklace' : null;
+  if (!start){ try { start = localStorage.getItem(KEY); } catch(e){} }
+  show(start || 'sweater');
 })();
 </script>
 </body>
